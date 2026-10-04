@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trek</title>
+  <link rel="icon" type="image/jpeg" href="favicon.jpg">
+  <link rel="apple-touch-icon" href="favicon.jpg">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --sky: #55b9e8;
+      --sky-dark: #2199d0;
+      --blue: #1598d7;
+      --blue-dark: #087cb8;
+      --green: #78a968;
+      --green-dark: #5d914f;
+      --yellow: #ffd34e;
+      --ink: #17212b;
+    }
+
+    html {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(255,255,255,.38) 0 28px, transparent 29px),
+        radial-gradient(circle at 91% 18%, rgba(255,255,255,.28) 0 42px, transparent 43px),
+        linear-gradient(#39aee3, #79c9ec 58%, #a9def2);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Comic Sans MS", Arial, sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .18;
+      background-image:
+        radial-gradient(#fff 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .page {
+      width: min(1250px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0 50px;
+    }
+
+    /* Playful, school-site style header inspired by the reference image. */
+    .brand {
+      min-height: 150px;
+      padding: 20px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border: 4px solid #a8c927;
+      border-radius: 2px;
+      background:
+        radial-gradient(circle at 8% 55%, rgba(255,255,255,.2) 0 65px, transparent 66px),
+        radial-gradient(circle at 95% 15%, rgba(255,255,255,.15) 0 90px, transparent 91px),
+        linear-gradient(135deg, #b8d82a, #d2e72b 50%, #a9ce18);
+      box-shadow: 0 4px 0 rgba(0,0,0,.12);
+    }
+
+    .logo {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      letter-spacing: -5px;
+      font-family: "Comic Sans MS", "Trebuchet MS", cursive;
+      font-weight: 900;
+      color: white;
+      text-shadow:
+        0 4px 0 #e88b21,
+        2px 5px 0 #e88b21,
+        -2px 3px 0 #e88b21,
+        0 0 1px #fff;
+      transform: rotate(-1deg);
+      user-select: none;
+    }
+
+    .logo span {
+      display: inline-block;
+    }
+
+    .logo .big {
+      font-size: clamp(62px, 8vw, 92px);
+      transform: rotate(-4deg) translateY(3px);
+    }
+
+    .logo .small {
+      font-size: clamp(42px, 5vw, 62px);
+      transform: rotate(2deg);
+    }
+
+    .logo .medium {
+      font-size: clamp(51px, 6vw, 72px);
+      transform: rotate(-2deg) translateY(5px);
+    }
+
+    .logo-icon {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      margin-right: 12px;
+      border-radius: 13px;
+      filter: drop-shadow(0 3px 0 rgba(0,0,0,.18));
+    }
+
+    .tagline {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 10px;
+      margin: 0;
+      color: #477019;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .content,
+    .sidebar {
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(0,0,0,.06);
+      box-shadow: 0 2px 7px rgba(0,0,0,.12);
+    }
+
+    .content {
+      padding: 26px 28px 32px;
+    }
+
+    .welcome {
+      display: inline-block;
+      margin: 0 0 14px;
+      padding: 8px 28px 9px;
+      background: #d8effb;
+      clip-path: polygon(0 0, 100% 0, 96% 100%, 2% 100%);
+      font-size: clamp(25px, 3vw, 36px);
+      font-weight: 900;
+      letter-spacing: -.5px;
+    }
+
+    .intro {
+      margin: 0 0 18px;
+      font-size: 17px;
+      line-height: 1.45;
+    }
+
+    .search-wrap {
+      margin: 10px 0 22px;
+      display: flex;
+      gap: 10px;
+    }
+
+    #searchBar {
+      width: 100%;
+      height: 52px;
+      padding: 0 18px;
+      border: 3px solid #55a6d0;
+      border-radius: 7px;
+      outline: none;
+      background: white;
+      color: #17212b;
+      font: 700 17px "Trebuchet MS", Arial, sans-serif;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,.07);
+    }
+
+    #searchBar:focus {
+      border-color: #168fc8;
+      box-shadow: 0 0 0 3px rgba(22,143,200,.16);
+    }
+
+    #searchBar::placeholder { color: #72818b; }
+
+    .section-title {
+      margin: 6px 0 10px;
+      font-size: 21px;
+    }
+
+    #count {
+      margin: 0 0 13px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #5c6a70;
+    }
+
+    #container {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .game {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      min-width: 0;
+      border: 2px solid #507f48;
+      background: var(--green);
+      box-shadow: 0 2px 0 #436e3c;
+      transition: transform .14s ease, filter .14s ease;
+    }
+
+    .game:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.08);
+    }
+
+    .game img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #668f5d;
+    }
+
+    .game-name {
+      min-height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 9px;
+      color: white;
+      text-align: center;
+      font-size: 15px;
+      line-height: 1.05;
+      font-weight: 900;
+      text-shadow: 1px 1px 0 rgba(0,0,0,.28);
+    }
+
+    .sidebar {
+      padding: 10px;
+      align-self: start;
+    }
+
+    .side-title {
+      padding: 11px;
+      text-align: center;
+      color: white;
+      background: var(--blue);
+      font-size: 25px;
+      font-weight: 900;
+      border: 2px solid #0a86c1;
+      margin-bottom: 8px;
+    }
+
+    .side-link {
+      display: block;
+      padding: 13px 9px;
+      border-bottom: 1px solid #b9dced;
+      color: #101820;
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .side-link::before {
+      content: "▶";
+      display: inline-block;
+      margin-right: 8px;
+      color: #a8ce12;
+      font-size: 13px;
+    }
+
+    .side-link:hover {
+      background: #e3f5fc;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      padding: 45px 20px;
+      text-align: center;
+      color: #61727b;
+      font-weight: 700;
+    }
+@media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar {
+        order: -1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0;
+      }
+      .side-title { grid-column: 1 / -1; }
+      .side-link { padding: 11px 8px; }
+      #container { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: calc(100% - 12px);
+        padding-top: 6px;
+      }
+
+      .brand {
+        min-height: 120px;
+        padding: 10px;
+      }
+
+      .logo-icon {
+        width: 38px;
+        height: 38px;
+        margin-right: 5px;
+      }
+
+      .tagline {
+        font-size: 12px;
+        bottom: 6px;
+      }
+
+      .content { padding: 17px 12px 24px; }
+      .welcome { font-size: 25px; padding-left: 16px; padding-right: 16px; }
+
+      #container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+
+      .sidebar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header class="brand">
+      <div class="logo">
+        <img class="logo-icon" src="favicon.jpg" alt="">
+        <span class="big">T</span><span class="small">r</span><span class="medium">e</span><span class="small">k</span>
+      </div>
+      <p class="tagline">Find a game and start playing!</p>
+    </header>
+
+    <div class="layout">
+      <main class="content">
+        <h1 class="welcome">Find a game to play</h1>
+        <p class="intro">
+          Pick a game from the list below, or search for one you want to play.
+        </p>
+
+        <div class="search-wrap">
+          <input id="searchBar" type="search" placeholder="🔎  Search games..." autocomplete="off">
+        </div>
+
+        <h2 class="section-title">All games</h2>
+        <p id="count">Loading games...</p>
+        <div id="container"></div>
+      </main>
+
+      <aside class="sidebar">
+        <div class="side-title">Menu</div>
+        <a class="side-link" onclick="window.scrollTo({top:0,behavior:'smooth'})">Home</a>
+        <a class="side-link" onclick="document.getElementById('searchBar').focus()">Search games</a>
+        <a class="side-link" onclick="document.getElementById('container').scrollIntoView({behavior:'smooth'})">All games</a>
+        <a class="side-link" onclick="searchBar.value=''; filterGames()">Show all</a>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById("container");
+    const searchBar = document.getElementById("searchBar");
+    const count = document.getElementById("count");
+
+    // Original game sources preserved from the supplied site.
+    const zonesurls = [
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json",
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets@latest/zones.json",
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets@master/zones.json",
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets/zones.json"
+    ];
+
+    let zonesURL = zonesurls[Math.floor(Math.random() * zonesurls.length)];
+    const coverURL = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main";
+    const htmlURL = "https://cdn.jsdelivr.net/gh/freebuisness/html@main";
+    let zones = [];
+
+    function gameUrl(file) {
+      if (file.url.startsWith("http")) return file.url;
+      return file.url
+        .replace("{COVER_URL}", coverURL)
+        .replace("{HTML_URL}", htmlURL);
+    }
+
+    function coverUrl(file) {
+      return file.cover
+        .replace("{COVER_URL}", coverURL)
+        .replace("{HTML_URL}", htmlURL);
+    }
+
+    function openGame(file) {
+      // Preserve the original game's direct/open behavior.
+      if (file.url.startsWith("http")) {
+        window.open(file.url, "_blank");
+        return;
+      }
+
+      const url = gameUrl(file);
+      fetch(url + (url.includes("?") ? "&" : "?") + "t=" + Date.now())
+        .then(response => {
+          if (!response.ok) throw new Error("Game failed to load");
+          return response.text();
+        })
+        .then(html => {
+          // Open the game in a clean new tab instead of showing the
+          // original site's game viewer UI.
+          const win = window.open("about:blank", "_blank");
+          if (!win) {
+            alert("Please allow pop-ups for Trek to open games.");
+            return;
+          }
+          win.document.open();
+          win.document.write(html);
+          win.document.close();
+        })
+        .catch(error => {
+          console.error(error);
+          // Fallback to the game URL if the HTML fetch is blocked.
+          window.open(url, "_blank");
+        });
+    }
+
+    function displayGames(list) {
+      container.innerHTML = "";
+
+      if (!list.length) {
+        container.innerHTML = '<div class="empty">No games found.</div>';
+        count.textContent = "0 games";
+        return;
+      }
+
+      count.textContent = `${list.length} ${list.length === 1 ? "game" : "games"}`;
+
+      const fragment = document.createDocumentFragment();
+
+      for (const file of list) {
+        const card = document.createElement("article");
+        card.className = "game";
+        card.title = file.name;
+        card.onclick = () => openGame(file);
+
+        const img = document.createElement("img");
+        img.src = coverUrl(file);
+        img.alt = file.name;
+        img.loading = "lazy";
+        img.onerror = () => {
+          img.style.visibility = "hidden";
+        };
+
+        const name = document.createElement("div");
+        name.className = "game-name";
+        name.textContent = file.name;
+
+        card.appendChild(img);
+        card.appendChild(name);
+        fragment.appendChild(card);
+      }
+
+      container.appendChild(fragment);
+    }
+
+    function filterGames() {
+      const query = searchBar.value.trim().toLowerCase();
+
+      if (!query) {
+        displayGames(zones);
+        return;
+      }
+
+      displayGames(
+        zones.filter(game =>
+          String(game.name || "").toLowerCase().includes(query)
+        )
+      );
+    }
+
+    async function listGames() {
+      try {
+        // Keep the source's GitHub commit lookup so the game list stays current.
+        try {
+          const commitResponse = await fetch(
+            "https://api.github.com/repos/freebuisness/assets/commits?t=" + Date.now()
+          );
+
+          if (commitResponse.ok) {
+            const commits = await commitResponse.json();
+            const sha = commits?.[0]?.sha;
+            if (sha) {
+              zonesURL =
+                `https://cdn.jsdelivr.net/gh/freebuisness/assets@${sha}/zones.json`;
+            }
+          }
+        } catch (_) {}
+
+        const response = await fetch(zonesURL + "?t=" + Date.now());
+        if (!response.ok) throw new Error("Could not load game list.");
+
+        zones = await response.json();
+        zones = Array.isArray(zones) ? zones : [];
+
+        // Remove only exact duplicate URLs, as requested for the cleaned game list.
+        const seen = new Set();
+        zones = zones.filter(game => {
+          const key = String(game.url || "");
+          if (!key || seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+        displayGames(zones);
+      } catch (error) {
+        console.error(error);
+        count.textContent = "Could not load games";
+        container.innerHTML =
+          '<div class="empty">The game list could not be loaded. Check your connection and try again.</div>';
+      }
+    }
+
+    searchBar.addEventListener("input", filterGames);
+    listGames();
+  </script>
+</body>
+</html>
